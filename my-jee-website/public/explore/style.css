@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top, #0b0f2b, #020314);
+  color: #e6e6ff;
+  line-height: 1.6;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(90deg, #1f3cff, #7f00ff);
+}
+
+.header h1 {
+  font-size: 2.2rem;
+}
+
+.header p {
+  opacity: 0.9;
+}
+
+/* Dr Neutron */
+.neutron {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255,255,255,0.08);
+  margin: 30px auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+}
+
+.neutron img {
+  width: 70px;
+}
+
+/* Content */
+.content {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+}
+
+.card {
+  background: rgba(255,255,255,0.06);
+  margin: 25px 0;
+  padding: 25px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.card h2 {
+  margin-bottom: 15px;
+  color: #7fd7ff;
+}
+
+.card h3 {
+  margin-top: 15px;
+  color: #ffd166;
+}
+
+.formula {
+  background: #000814;
+  padding: 10px;
+  margin: 10px 0;
+  border-left: 4px solid #00b4d8;
+  font-family: monospace;
+}
+
+.highlight {
+  color: #90dbf4;
+  font-weight: bold;
+}
+
+.note {
+  opacity: 0.85;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  margin: 15px 0;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 8px;
+  text-align: center;
+}
+
+/* Back Button */
+.back-button-container {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #7f00ff, #1f3cff);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1rem;
+}
+
+.back-btn:hover {
+  opacity: 0.9;
+}
+
+.complete {
+  text-align: center;
+  padding: 30px;
+  font-size: 1.2rem;
+  color: #4cff4c;
+}

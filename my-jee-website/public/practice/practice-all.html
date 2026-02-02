@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clario | Practice Mode</title>
+  <link rel="stylesheet" href="practice-interactive.css">
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+<body>
+
+<header class="header">
+  <h1>🧠 Practice Mode</h1>
+  <p>Motion in One Dimension • Interactive MCQs</p>
+</header>
+
+<section class="neutron">
+  <img src="Dr neutron.png" alt="Dr Neutron">
+  <div>
+    <h3>Dr. Neutron</h3>
+    <p>Select an option, then check your answer. Learn from every attempt!</p>
+  </div>
+</section>
+
+<main class="content">
+
+  <section class="card" id="question-card">
+    <h2 id="q-number">Question 1</h2>
+    <p class="q-text" id="q-text"></p>
+
+    <div class="options" id="options-container"></div>
+
+    <button class="check-btn" id="check-btn">Check Answer</button>
+    <p class="feedback" id="feedback"></p>
+
+    <div class="navigation">
+      <button id="back-btn">⬅ Back</button>
+      <div class="nav-right">
+        <button id="prev-btn">⬅ Previous</button>
+        <button id="next-btn">Next ➡</button>
+      </div>
+    </div>
+  </section> 
+
+  <section class="complete" id="completion" style="display:none;">
+    🌠 Practice Complete! <br>
+    Ready for <b>Personalized Quiz Mode</b>
+  </section>      
+
+</main>
+
+<script src="practice-all.js"></script>
+<script src="../shared/chatbot.js"></script>
+</body>
+</html>

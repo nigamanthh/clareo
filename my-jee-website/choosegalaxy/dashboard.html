@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clario | Physics Galaxy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+<body>
+
+  <div class="subject-container">
+    <h1 class="galaxy-title">Physics Galaxy</h1>
+    <p class="galaxy-subtitle">Conquer each planet to restore balance</p>
+
+    <div class="chapter-grid">
+
+      <div class="chapter-card"><h3>Units & Measurements</h3></div>
+      <div class="chapter-card motion1d" onclick="openNeutron()">
+        <h3>Motion in 1D</h3>
+      </div>
+
+      <div class="chapter-card"><h3>Motion in 2D</h3></div>
+      <div class="chapter-card"><h3>Laws of Motion</h3></div>
+      <div class="chapter-card"><h3>Work, Energy & Power</h3></div>
+      <div class="chapter-card"><h3>System of Particles</h3></div>
+      <div class="chapter-card"><h3>Gravitation</h3></div>
+      <div class="chapter-card"><h3>Properties of Bulk Matter</h3></div>
+      <div class="chapter-card"><h3>Thermodynamics</h3></div>
+      <div class="chapter-card"><h3>Kinetic Theory</h3></div>
+      <div class="chapter-card"><h3>Oscillations & Waves</h3></div>
+      <div class="chapter-card"><h3>Electrostatics</h3></div>
+      <div class="chapter-card"><h3>Current Electricity</h3></div>
+      <div class="chapter-card"><h3>Magnetism</h3></div>
+      <div class="chapter-card"><h3>EM Induction & AC</h3></div>
+      <div class="chapter-card"><h3>EM Waves</h3></div>
+      <div class="chapter-card"><h3>Optics</h3></div>
+      <div class="chapter-card"><h3>Dual Nature</h3></div>
+      <div class="chapter-card"><h3>Atoms & Nuclei</h3></div>
+
+    </div>
+  </div>
+
+  <!-- DR NEUTRON OVERLAY -->
+  <div id="neutronOverlay" class="neutron-overlay">
+    <div class="neutron-box">
+      <h2>Dr. Neutron</h2>
+
+      <p>This world moves along a single path.</p>
+      <p>Every position has meaning. Every direction matters.</p>
+
+      <p class="highlight">
+        Understand motion in one dimension… and balance will return.
+      </p>
+
+      <button onclick="closeNeutron()">Begin Journey</button>
+    </div>
+  </div>
+
+  <script>
+    function openNeutron() {
+      document.getElementById("neutronOverlay").classList.add("active");
+    }
+
+    function closeNeutron() {
+      document.getElementById("neutronOverlay").classList.remove("active");
+      window.location.href = "try3.html";
+    }
+  </script>
+
+  <script src="../shared/chatbot.js"></script>
+</body>
+</html>

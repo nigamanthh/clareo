@@ -1,0 +1,173 @@
+/* ===== GLOBAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top left, #0a0122, #240046, #3c096c);
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://www.transparenttextures.com/patterns/stardust.png"),
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 70%);
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===== DIALOGUE ===== */
+#dialogue-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #0a0122, #1b0035);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.dialogue-box {
+  background: rgba(0,0,0,0.6);
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(0,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.dialogue-box h3 {
+  color: #9ae7ff;
+  margin-bottom: 1rem;
+}
+
+.dialogue-box p {
+  color: #e0f7ff;
+  min-height: 60px;
+  margin-bottom: 1.5rem;
+}
+
+#next-btn {
+  background: linear-gradient(90deg, #00b4d8, #7b2cbf);
+  border: none;
+  padding: 0.7rem 1.6rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== TRANSITION ===== */
+.fade-out {
+  animation: fadeOut 0.8s forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
+/* ===== GALAXY PAGE ===== */
+.galaxy-container {
+  text-align: center;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.title {
+  font-size: 2.3rem;
+  color: #bceaff;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #9ae7ff;
+  margin-bottom: 3rem;
+}
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.galaxy-card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 300px;
+  box-shadow: 0 0 20px rgba(0,255,255,0.15);
+  transition: 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.galaxy-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 0 40px rgba(0,255,255,0.3);
+}
+
+.physics { border-top: 4px solid #00b4d8; }
+.chemistry { border-top: 4px solid #80ffdb; }
+.maths { border-top: 4px solid #c77dff; }
+
+.galaxy-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.galaxy-card p {
+  color: #a2d2ff;
+  margin-bottom: 1.5rem;
+}
+
+.enter-btn {
+  background: linear-gradient(90deg, #00b4d8, #7b2cbf);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== DUEL BUTTON ===== */
+.duel-container {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.duel-btn {
+  background: linear-gradient(90deg, #ff006e, #8338ec);
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 14px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255,0,110,0.4);
+  transition: 0.3s ease;
+}
+
+.duel-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 0 45px rgba(255,0,110,0.7);
+}

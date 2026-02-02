@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clario – Awakening</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="choose-galaxy.css">
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+
+<body>
+
+  <!-- 🧑‍🔬 DR NEUTRON DIALOGUE -->
+  <div id="dialogue-overlay">
+    <div class="dialogue-box">
+      <h3>🧑‍🔬 Dr. Neutron</h3>
+      <p id="dialogue-text"></p>
+      <button id="next-btn">Next</button>
+    </div>
+  </div>
+
+  <!-- 🌌 GALAXY PAGE -->
+  <div class="galaxy-container hidden" id="galaxyPage">
+    <h1 class="title">Choose Your Galaxy</h1>
+    <p class="subtitle">Select a realm to begin your cosmic journey</p>
+
+    <div class="card-wrapper">
+      <div class="galaxy-card physics">
+        <h2>Physics</h2>
+        <p>Explore the universe and its mysteries.</p>
+        <button class="enter-btn" onclick="selectGalaxy('Physics')">Enter Galaxy</button>
+      </div>
+
+      <div class="galaxy-card chemistry">
+        <h2>Chemistry</h2>
+        <p>Discover reactions that shape the cosmos.</p>
+        <button class="enter-btn" onclick="selectGalaxy('Chemistry')">Enter Galaxy</button>
+      </div>
+
+      <div class="galaxy-card maths">
+        <h2>Maths</h2>
+        <p>Decode the language of the universe.</p>
+        <button class="enter-btn" onclick="selectGalaxy('Maths')">Enter Galaxy</button>
+      </div>
+    </div>
+
+    <!-- ⚔️ DUEL CHALLENGES -->
+    <div class="duel-container">
+      <button class="duel-btn" onclick="goToDuel()">⚔️ Duel Challenges</button>
+    </div>
+  </div>
+
+  <script>
+    const dialogues = [
+      "Ah… another curious mind awakens.",
+      "Once, understanding held the universe together.",
+      "But shortcuts replaced clarity… and everything fractured.",
+      "These galaxies now drift in confusion.",
+      "Restore them — and you restore balance.",
+      "Choose wisely, Explorer."
+    ];
+
+    let index = 0;
+    const dialogueText = document.getElementById("dialogue-text");
+    const overlay = document.getElementById("dialogue-overlay");
+    const galaxyPage = document.getElementById("galaxyPage");
+
+    dialogueText.innerText = dialogues[index];
+
+    document.getElementById("next-btn").onclick = () => {
+      index++;
+      if (index < dialogues.length) {
+        dialogueText.innerText = dialogues[index];
+      } else {
+        overlay.classList.add("fade-out");
+        setTimeout(() => {
+          overlay.style.display = "none";
+          galaxyPage.classList.remove("hidden");
+        }, 800);
+      }
+    };
+
+    function selectGalaxy(subject) {
+      localStorage.setItem("selectedSubject", subject);
+      window.location.href = "dashboard.html";
+    }
+
+    function goToDuel() {
+      const currentUrl = window.location.href;
+      const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/choosegalaxy/'));
+      window.location.href = baseUrl + '/duel-challenge-final/duel-landing.html';
+    }
+  </script>
+
+  <script src="../shared/chatbot.js"></script>
+</body>
+</html>

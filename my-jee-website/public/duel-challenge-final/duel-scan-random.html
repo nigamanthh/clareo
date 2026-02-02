@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clario – Scanning for Opponent</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #1b0b2e, #05030a 80%);
+  color: white;
+}
+
+/* ================= STARFIELD ================= */
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ================= LAYOUT ================= */
+.scan-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 0 10%;
+}
+
+/* ================= ROCKETS ================= */
+.rocket {
+  font-size: 108px; /* 150% size */
+  text-align: center;
+  transform: rotate(-45deg) scale(1.5);
+  animation: pulse 2s infinite;
+  transition: transform 1.4s ease;
+}
+
+.rocket.left {
+  justify-self: start;
+}
+
+.rocket.right {
+  justify-self: end;
+  opacity: 0.6;
+}
+
+/* Stop pulsing once opponent is found */
+.found .rocket {
+  animation: none;
+}
+
+/* 🚀 DRIFT UPWARD — NO OPACITY CHANGE */
+.fly-away {
+  transform: translateY(-140vh) rotate(-45deg) scale(1.5);
+}
+
+/* ================= CENTER TEXT ================= */
+.center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  letter-spacing: 0.6px;
+  animation: textPulse 1.8s infinite;
+  pointer-events: none;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes pulse {
+  0%, 100% {
+    transform: rotate(-45deg) scale(1.5);
+  }
+  50% {
+    transform: rotate(-45deg) scale(1.65);
+  }
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div class="scan-container" id="scanContainer">
+
+  <div id="rocketYou" class="rocket left">🚀</div>
+  <div id="rocketOpp" class="rocket right">🚀</div>
+
+  <div class="center-text">
+    <span id="scanText">Scanning for opponent…</span>
+  </div>
+
+</div>
+
+<script>
+/* ================= STARFIELD ================= */
+const canvas = document.getElementById("starfield");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+const stars = Array.from({ length: 700 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  r: Math.random() * 1.6 + 0.4,
+  s: Math.random() * 0.6 + 0.2
+}));
+
+(function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#9fd3ff";
+
+  stars.forEach(star => {
+    star.y += star.s;
+    if (star.y > canvas.height) star.y = 0;
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animateStars);
+})();
+
+/* ================= SCAN FLOW ================= */
+const scanText = document.getElementById("scanText");
+const rocketYou = document.getElementById("rocketYou");
+const rocketOpp = document.getElementById("rocketOpp");
+const scanContainer = document.getElementById("scanContainer");
+
+/* Opponent found */
+setTimeout(() => {
+  scanText.innerText = "Opponent found";
+  rocketOpp.style.opacity = "1";
+  scanContainer.classList.add("found");
+}, 2800);
+
+/* 🚀 Drift upward */
+setTimeout(() => {
+  rocketYou.classList.add("fly-away");
+  rocketOpp.classList.add("fly-away");
+}, 4200);
+
+/* Transition AFTER rockets exit screen */
+setTimeout(() => {
+  window.location.href = "duel-battle-random.html";
+}, 6000);
+</script>
+
+</body>
+</html>

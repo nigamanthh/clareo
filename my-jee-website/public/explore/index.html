@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clario | Explore Chapter</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1>🚀 Motion in One Dimension</h1>
+    <p>Master motion. One dimension at a time</p>
+  </header>
+
+  <!-- Dr Neutron Guide -->
+  <section class="neutron">
+    <img src="Dr neutron.png" alt="Dr Neutron">
+    <div>
+      <h3>Dr. Neutron</h3>
+      <p>
+        Welcome, Explorer! This planet covers the backbone of mechanics.
+        Read carefully — every JEE problem starts here.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Section 1 -->
+    <section class="card">
+      <h2>1. Fundamental Concepts</h2>
+
+      <h3>Frame of Reference</h3>
+      <p>
+        A frame of reference consists of a coordinate system and a clock
+        used by an observer to measure position and time.
+      </p>
+
+      <p class="highlight">
+        Motion and rest are relative — there is no absolute motion or rest.
+      </p>
+
+      <p>
+        Example: A tree is at rest w.r.t Earth but in motion w.r.t a moving car.
+        Earth itself moves w.r.t the Sun.
+      </p>
+
+      <h3>1D Motion</h3>
+      <p>
+        Motion restricted to a single straight line (x-axis).
+        Bodies are treated as point particles.
+      </p>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="card">
+      <h2>2. Position, Distance & Displacement</h2>
+
+      <p>
+        Position of a particle at time <b>t</b> is given by coordinate <b>x</b>.
+      </p>
+
+      <p>
+        Position vector in 1D:
+        <span class="formula">r⃗ = x î</span>
+      </p>
+
+      <table>
+        <tr>
+          <th>Quantity</th>
+          <th>Nature</th>
+          <th>Key Property</th>
+        </tr>
+        <tr>
+          <td>Distance</td>
+          <td>Scalar</td>
+          <td>Total path length</td>
+        </tr>
+        <tr>
+          <td>Displacement</td>
+          <td>Vector</td>
+          <td>Shortest straight line</td>
+        </tr>
+      </table>
+
+      <p class="note">
+        Returning to origin ⇒ Displacement = 0, Distance ≠ 0
+      </p>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="card">
+      <h2>3. Speed & Velocity</h2>
+
+      <h3>Average Quantities</h3>
+      <p class="formula">
+        Average Speed = Total Distance / Δt
+      </p>
+
+      <p class="formula">
+        Average Velocity = (xf − xi) / (tf − ti)
+      </p>
+
+      <h3>Instantaneous Quantities</h3>
+      <p class="formula">
+        v = dx/dt
+      </p>
+
+      <p class="highlight">
+        Speed ≥ |Velocity|
+      </p>
+
+      <p class="note">
+        Possible cases: (0,0), (≠0,≠0), (≠0,0) <br>
+        Impossible: (0,≠0)
+      </p>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="card">
+      <h2>4. Acceleration</h2>
+
+      <p class="formula">
+        Average Acceleration = Δv / Δt
+      </p>
+
+      <p class="formula">
+        Instantaneous Acceleration = dv/dt = d²x/dt²
+      </p>
+
+      <p class="highlight">
+        If acceleration and velocity are in same direction → speed increases
+      </p>
+
+      <p class="highlight">
+        If acceleration and velocity are opposite → speed decreases
+      </p>
+
+      <p class="note">
+        Never assume "a > 0 ⇒ speed increases" — sign convention matters!
+      </p>
+    </section>
+
+    <!-- Section 5 -->
+    <section class="card">
+      <h2>5. Equations of Motion (Constant Acceleration)</h2>
+
+      <ul>
+        <li>v = u + at</li>
+        <li>s = ut + ½at²</li>
+        <li>v² = u² + 2as</li>
+        <li>s = (u + v)t / 2</li>
+      </ul>
+
+      <p class="formula">
+        Displacement in nth second: sₙ = u + a/2 (2n − 1)
+      </p>
+    </section>
+
+    <!-- Section 6 -->
+    <section class="card">
+      <h2>6. Motion Graphs</h2>
+
+      <ul>
+        <li>x–t graph slope ⇒ velocity</li>
+        <li>v–t graph slope ⇒ acceleration</li>
+        <li>Area under v–t ⇒ displacement</li>
+      </ul>
+
+      <p class="note">
+        v–t straight line ⇒ constant acceleration <br>
+        x–t parabola ⇒ constant acceleration
+      </p>
+    </section>
+
+    <!-- Section 7 -->
+    <section class="card">
+      <h2>7. Special Cases</h2>
+
+      <h3>Free Fall</h3>
+      <p class="formula">
+        v = u − gt <br>
+        h = ut − ½gt² <br>
+        v² = u² − 2gh
+      </p>
+
+      <h3>Relative Motion</h3>
+      <p class="formula">
+        v<sub>A/B</sub> = v<sub>A</sub> − v<sub>B</sub>
+      </p>
+    </section>
+
+    <!-- Back Button -->
+    <div class="back-button-container">
+      <button id="back-btn" class="back-btn">⬅ Back</button>
+    </div>
+
+    <!-- End -->
+    <section class="complete">
+      🌟 Chapter Exploration Complete! <br>
+      Proceed to <b>Practice Mode</b> to conquer this planet.
+    </section>
+
+  </main>
+
+  <script>
+    document.getElementById('back-btn').addEventListener('click', () => {
+      window.location.href = '../choosegalaxy/try3.html';
+    });
+  </script>
+
+  <script src="../shared/chatbot.js"></script>
+</body>
+</html>

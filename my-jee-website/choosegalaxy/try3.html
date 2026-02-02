@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JEE Space Universe</title>
+<link rel="stylesheet" href="../shared/chatbot.css">
+
+<style>
+body { margin: 0; overflow: hidden; background: black; }
+
+.hud {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  color: #0ff;
+  font-family: monospace;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+#enterUI {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 18px 28px;
+  background: rgba(0,0,40,0.85);
+  border: 1px solid cyan;
+  border-radius: 14px;
+  font-family: monospace;
+  font-size: 18px;
+  color: cyan;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hud">
+W/S Move · A/D Turn · Arrows Pitch/Roll · Space Boost · E Enter
+</div>
+<div id="enterUI">Press E to Enter</div>
+
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+
+<script>
+/* ================= SCENE ================= */
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 10000);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+document.body.appendChild(renderer.domElement);
+
+/* ================= LIGHT ================= */
+scene.add(new THREE.AmbientLight(0xffffff,0.6));
+const light = new THREE.PointLight(0x00ffff,1.2);
+light.position.set(10,15,10);
+scene.add(light);
+
+/* ================= STARFIELD ================= */
+const starCount = 10000;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(starCount*3);
+
+for(let i=0;i<starCount;i++){
+  starPos[i*3]   = (Math.random()-0.5)*5000;
+  starPos[i*3+1] = (Math.random()-0.5)*5000;
+  starPos[i*3+2] = -Math.random()*5000;
+}
+starGeo.setAttribute("position", new THREE.BufferAttribute(starPos,3));
+const stars = new THREE.Points(
+  starGeo,
+  new THREE.PointsMaterial({ color:0xffffff, size:1 })
+);
+scene.add(stars);
+
+/* ================= SHIP ================= */
+const ship = new THREE.Group();
+
+const hull = new THREE.Mesh(
+  new THREE.CapsuleGeometry(1,4,8,16),
+  new THREE.MeshStandardMaterial({ color:0x999999 })
+);
+hull.rotation.x = Math.PI/2;
+ship.add(hull);
+
+const nose = new THREE.Mesh(
+  new THREE.ConeGeometry(1,2,24),
+  new THREE.MeshStandardMaterial({ color:0xffffff })
+);
+nose.position.z = -4;
+nose.rotation.x = Math.PI/2;
+ship.add(nose);
+
+function wing(x){
+  const w = new THREE.Mesh(
+    new THREE.BoxGeometry(4,0.15,1.2),
+    new THREE.MeshStandardMaterial({ color:0x444444 })
+  );
+  w.position.set(x,0,0);
+  return w;
+}
+ship.add(wing(2.5));
+ship.add(wing(-2.5));
+
+scene.add(ship);
+
+/* ================= CONTROLS ================= */
+const keys = {};
+addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);
+addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+
+let velocity = new THREE.Vector3();
+let angular = new THREE.Vector3();
+
+function updateFlight(){
+  if(keys["a"]) angular.y += 0.002;
+  if(keys["d"]) angular.y -= 0.002;
+  if(keys["arrowup"]) angular.x += 0.002;
+  if(keys["arrowdown"]) angular.x -= 0.002;
+  if(keys["arrowleft"]) angular.z += 0.002;
+  if(keys["arrowright"]) angular.z -= 0.002;
+
+  ship.rotation.x += angular.x;
+  ship.rotation.y += angular.y;
+  ship.rotation.z += angular.z;
+  angular.multiplyScalar(0.95);
+
+  let thrust = keys[" "] ? 0.08 : 0.03;
+  if(keys["w"])
+    velocity.add(new THREE.Vector3(0,0,-1)
+      .applyQuaternion(ship.quaternion)
+      .multiplyScalar(thrust));
+
+  velocity.multiplyScalar(0.98);
+  ship.position.add(velocity);
+
+  stars.position.copy(ship.position).multiplyScalar(-1);
+}
+
+/* ================= CAMERA ================= */
+const camOffset = new THREE.Vector3(0,4,14);
+function updateCamera(){
+  const desired = camOffset.clone().applyQuaternion(ship.quaternion);
+  camera.position.lerp(ship.position.clone().add(desired),0.08);
+  camera.lookAt(ship.position);
+}
+
+/* ================= GAME STATE ================= */
+let state = "ASTEROID"; // start directly in ASTEROID
+const enterUI = document.getElementById("enterUI");
+
+let asteroids = [];
+let currentAsteroid = null; // asteroid we are close to
+
+// Map asteroid names to HTML files
+const asteroidLinks = {
+  "Explore Chapter": "../explore/index.html",
+  "Practice": "../practice/practice-all.html",
+  "Personalised Quiz": "../personalised/step-solver.html",
+  "Mock Test": "mocktest.html"
+};
+
+/* label helper */
+function makeLabel(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  ctx.fillRect(0, 0, 512, 128);
+
+  ctx.fillStyle = "#00ffff";
+  ctx.font = "36px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(text, 256, 80);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  const sprite = new THREE.Sprite(material);
+  sprite.scale.set(40, 10, 1);
+
+  return sprite;
+}
+
+/* ================= ASTEROID SPACE ================= */
+function enterAsteroidSpace(){
+  state="ASTEROID";
+
+  const asteroidNames = [
+    "Explore Chapter",
+    "Practice",
+    "Personalised Quiz",
+    "Mock Test"
+  ];
+
+  for(let i=0;i<4;i++){
+    const a = new THREE.Mesh(
+      new THREE.DodecahedronGeometry(6),
+      new THREE.MeshStandardMaterial({ color:0x555555 })
+    );
+    a.position.set(
+      (Math.random()-0.5)*400,
+      (Math.random()-0.5)*200,
+      -200-Math.random()*300
+    );
+
+    const label = makeLabel(asteroidNames[i]);
+    label.position.set(0, 10, 0);
+    a.add(label);
+
+    a.userData.name = asteroidNames[i]; // store name on mesh
+
+    asteroids.push(a);
+    scene.add(a);
+  }
+}
+
+/* create asteroids immediately */
+enterAsteroidSpace();
+
+/* ================= OPEN LINK ON E ================= */
+window.addEventListener("keydown", (e)=>{
+  if(e.key.toLowerCase() === "e" && currentAsteroid){
+    const name = currentAsteroid.userData.name;
+    const url = asteroidLinks[name];
+    if(url){
+      // open in same tab; use "_blank" if you want new tab
+      window.location.href = url; // [web:81]
+    }
+  }
+});
+
+/* ================= LOOP ================= */
+function animate(){
+  requestAnimationFrame(animate);
+  updateFlight();
+  updateCamera();
+
+  currentAsteroid = null;
+  enterUI.style.display="none";
+
+  if(state==="ASTEROID"){
+    asteroids.forEach(a=>{
+      a.rotation.x+=0.01;
+      a.rotation.y+=0.01;
+
+      // check distance ship <-> asteroid
+      const dist = ship.position.distanceTo(a.position); // [web:65][web:9]
+      if(dist < 40){ // adjust threshold as you like
+        currentAsteroid = a;
+      }
+    });
+
+    if(currentAsteroid){
+      enterUI.style.display = "block";
+    }
+  }
+
+  renderer.render(scene,camera);
+}
+animate();
+
+addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+
+<script src="../shared/chatbot.js"></script>
+</body>
+</html>

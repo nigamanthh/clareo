@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clario – Chemistry Duel</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:radial-gradient(circle at top,#1b0b2e,#05030a 80%);color:#fff}
+#starfield{position:fixed;inset:0;z-index:0}
+
+.arena{
+  position:relative;z-index:2;width:94%;height:92%;
+  margin:4% auto;background:rgba(10,6,25,.55);
+  backdrop-filter:blur(10px);border-radius:28px;
+  padding:32px;display:flex;flex-direction:column;
+}
+.top{display:flex;justify-content:space-between;margin-bottom:28px}
+.badge,.timer{background:rgba(255,255,255,.12);padding:10px 16px;border-radius:14px;font-size:14px}
+
+.main{flex:1;display:grid;grid-template-columns:1.4fr 1fr 1.1fr;gap:36px}
+.topic{opacity:.7;margin-bottom:10px}
+.question{background:rgba(60,40,120,.45);padding:22px;border-radius:18px;font-size:18px;margin-bottom:26px}
+.option{background:rgba(255,255,255,.1);padding:18px 20px;border-radius:18px;margin-bottom:18px;cursor:pointer}
+.option:hover{background:rgba(255,255,255,.18)}
+.option.correct{background:#0f3d2e;border:1px solid #2aff9a}
+.option.wrong{background:#4b0f1d;border:1px solid #ff4f7a}
+
+.center{display:flex;justify-content:center;align-items:center}
+.race{display:flex;gap:84px}
+.track-wrap{display:flex;flex-direction:column;align-items:center}
+.track{width:44px;height:440px;background:rgba(255,255,255,.15);border-radius:999px;position:relative}
+.fill{position:absolute;bottom:0;width:100%;height:0%;transition:.6s}
+.fill.you{background:linear-gradient(#37e8ff,#2ed1ff)}
+.fill.opp{background:linear-gradient(#ff6ab1,#b94cff)}
+.rocket{position:absolute;bottom:0;left:50%;transform:translateX(-50%);transition:.6s}
+
+.right{display:flex;align-items:center}
+.opp-panel{width:100%;background:rgba(255,255,255,.08);border-radius:22px;padding:28px}
+.opp-status{padding:16px;border-radius:16px;text-align:center;background:rgba(255,255,255,.12)}
+.opp-status.correct{background:#0f3d2e;color:#2aff9a}
+.opp-status.wrong{background:#4b0f1d;color:#ff9fb7}
+</style>
+</head>
+
+<body>
+<canvas id="starfield"></canvas>
+
+<div class="arena">
+  <div class="top">
+    <div class="badge">Question <span id="qNo">1</span>/10</div>
+    <div class="timer">⏱ <span id="time">10</span>s</div>
+    <div class="badge">Chemistry Duel</div>
+  </div>
+
+  <div class="main">
+    <div>
+      <div id="topic" class="topic"></div>
+      <div id="question" class="question"></div>
+      <div id="options"></div>
+    </div>
+
+    <div class="center">
+      <div class="race">
+        <div class="track-wrap">
+          <div class="track"><div id="fillYou" class="fill you"></div><div id="rocketYou" class="rocket">🚀</div></div>
+        </div>
+        <div class="track-wrap">
+          <div class="track"><div id="fillOpp" class="fill opp"></div><div id="rocketOpp" class="rocket">🚀</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="opp-panel"><div id="oppStatus" class="opp-status">Opponent is answering…</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* STARFIELD */
+const c=document.getElementById("starfield"),x=c.getContext("2d");
+function r(){c.width=innerWidth;c.height=innerHeight}r();onresize=r;
+let s=[...Array(700)].map(()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+.3,v:Math.random()*.6+.2}));
+(function a(){x.clearRect(0,0,c.width,c.height);x.fillStyle="#9fd3ff";
+s.forEach(o=>{o.y+=o.v;if(o.y>c.height)o.y=0;x.beginPath();x.arc(o.x,o.y,o.r,0,6.28);x.fill()});requestAnimationFrame(a)})();
+
+/* CHEMISTRY QUESTIONS */
+const questions=[
+{t:"Thermodynamics",q:"First law is based on conservation of?",o:["Mass","Energy","Entropy","Momentum"],a:1},
+{t:"Acids & Bases",q:"pH of neutral solution?",o:["0","1","7","14"],a:2},
+{t:"Bonding",q:"Maximum covalent character?",o:["NaCl","KCl","MgCl₂","AlCl₃"],a:3},
+{t:"Redox",q:"Oxidation means?",o:["Loss of electrons","Gain of electrons","Loss of oxygen","Gain of hydrogen"],a:0},
+{t:"Thermo",q:"Strongest acid?",o:["HCl","HNO₃","H₂SO₄","CH₃COOH"],a:2},
+{t:"Atomic Structure",q:"Electrons in n=3 shell?",o:["8","18","32","9"],a:1},
+{t:"Gases",q:"Ideal gas equation?",o:["PV=nRT","PV=RT","P=nRT","V=nRT"],a:0},
+{t:"Hybridisation",q:"Hybridisation of carbon in ethene?",o:["sp","sp²","sp³","dsp²"],a:1},
+{t:"MOT",q:"Highest bond order?",o:["O₂","O₂⁺","O₂⁻","O₂²⁻"],a:1},
+{t:"Structure",q:"Atomic number equals?",o:["Neutrons","Protons","Nucleons","Mass number"],a:1}
+];
+
+let qi=0,xp=0,oppXp=0,prog=0,oppProg=0,time=10,timer,userDone=false,oppDone=false;
+
+function loadQ(){
+  userDone=oppDone=false;
+  let q=questions[qi];
+  qNo.innerText=qi+1;topic.innerText=q.t;question.innerText=q.q;
+  options.innerHTML="";oppStatus.innerText="Opponent is answering…";
+  time=10;document.getElementById("time").innerText=time;
+  q.o.forEach((opt,i)=>{let d=document.createElement("div");d.className="option";d.innerText=opt;d.onclick=()=>ans(i);options.appendChild(d)});
+  timer=setInterval(()=>{time--;document.getElementById("time").innerText=time;if(time===0&&!userDone)ans(-1)},1000);
+  setTimeout(opp,1200+Math.random()*800);
+}
+
+function ans(i){
+  if(userDone)return;userDone=true;clearInterval(timer);
+  document.querySelectorAll(".option").forEach(o=>o.onclick=null);
+  if(i===questions[qi].a){xp+=100;prog+=10}
+  else if(i>=0){xp=Math.max(0,xp-50)}
+  fillYou.style.height=prog+"%";
+  check();
+}
+
+function opp(){
+  oppDone=true;oppXp+=100;oppProg+=10;
+  fillOpp.style.height=oppProg+"%";
+  oppStatus.innerText="Opponent answered correct";
+  check();
+}
+
+function check(){if(userDone&&oppDone)setTimeout(()=>{qi++;qi<10?loadQ():end()},1200)}
+function end(){alert("Chemistry Duel Complete 🚀")}
+
+loadQ();
+</script>
+</body>
+</html>

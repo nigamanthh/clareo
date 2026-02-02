@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Clario – Random PCM Duel</title>
+<link rel="stylesheet" href="../shared/chatbot.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  background:radial-gradient(circle at top,#1b0b2e,#05030a 80%);
+  color:#fff;
+}
+
+/* STARFIELD */
+#starfield{position:fixed;inset:0;z-index:0}
+
+/* ARENA */
+.arena{
+  position:relative;
+  z-index:2;
+  width:94%;
+  height:92%;
+  margin:4% auto;
+  background:rgba(10,6,25,.55);
+  backdrop-filter:blur(10px);
+  border-radius:28px;
+  padding:32px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* TOP */
+.top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:28px;
+}
+.badge,.timer{
+  background:rgba(255,255,255,.12);
+  padding:10px 16px;
+  border-radius:14px;
+  font-size:14px;
+}
+
+/* GRID */
+.main{
+  flex:1;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1.1fr;
+  gap:36px;
+}
+
+/* LEFT */
+.topic{opacity:.7;margin-bottom:10px}
+.question{
+  background:rgba(60,40,120,.45);
+  padding:22px;
+  border-radius:18px;
+  font-size:18px;
+  margin-bottom:26px;
+}
+.option{
+  background:rgba(255,255,255,.1);
+  padding:18px 20px;
+  border-radius:18px;
+  margin-bottom:18px;
+  cursor:pointer;
+  transition:.25s;
+}
+.option:hover{background:rgba(255,255,255,.18)}
+.option.correct{background:#0f3d2e;border:1px solid #2aff9a}
+.option.wrong{background:#4b0f1d;border:1px solid #ff4f7a}
+
+/* CENTER */
+.center{display:flex;justify-content:center;align-items:center}
+.race{display:flex;gap:84px}
+.track-wrap{display:flex;flex-direction:column;align-items:center}
+.track-label{margin-bottom:12px;opacity:.85}
+.track{
+  width:44px;height:440px;
+  background:rgba(255,255,255,.15);
+  border-radius:999px;
+  position:relative;overflow:hidden;
+}
+.fill{position:absolute;bottom:0;width:100%;height:0%;transition:.6s}
+.fill.you{background:linear-gradient(#37e8ff,#2ed1ff)}
+.fill.opp{background:linear-gradient(#ff6ab1,#b94cff)}
+.rocket{position:absolute;bottom:0;left:50%;transform:translateX(-50%);transition:.6s}
+.xp{margin-top:12px;opacity:.85}
+
+/* RIGHT */
+.right{display:flex;align-items:center}
+.opp-panel{
+  width:100%;
+  background:rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:28px;
+}
+.opp-status{
+  padding:16px;
+  border-radius:16px;
+  text-align:center;
+  background:rgba(255,255,255,.12);
+}
+.opp-status.answering{color:#ffd36a}
+.opp-status.correct{background:#0f3d2e;color:#2aff9a}
+.opp-status.wrong{background:#4b0f1d;color:#ff9fb7}
+
+/* RESULTS BUTTONS */
+.action-btn{
+  padding:14px 28px;
+  border-radius:18px;
+  border:none;
+  background:linear-gradient(135deg,#37e8ff,#b94cff);
+  color:#000;
+  font-size:15px;
+  cursor:pointer;
+}
+.action-btn.secondary{
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div class="arena">
+
+  <div class="top">
+    <div class="badge">Question <span id="qNo">1</span>/10</div>
+    <div class="timer">⏱ <span id="time">10</span>s</div>
+    <div class="badge">Duel</div>
+  </div>
+
+  <div class="main">
+
+    <div>
+      <div id="topic" class="topic"></div>
+      <div id="question" class="question"></div>
+      <div id="options"></div>
+    </div>
+
+    <div class="center">
+      <div class="race">
+        <div class="track-wrap">
+          <div class="track-label">You</div>
+          <div class="track">
+            <div id="fillYou" class="fill you"></div>
+            <div id="rocketYou" class="rocket">🚀</div>
+          </div>
+          <div class="xp"><span id="xpYou">0</span> XP</div>
+        </div>
+
+        <div class="track-wrap">
+          <div class="track-label">Opponent</div>
+          <div class="track">
+            <div id="fillOpp" class="fill opp"></div>
+            <div id="rocketOpp" class="rocket">🚀</div>
+          </div>
+          <div class="xp"><span id="xpOpp">0</span> XP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="opp-panel">
+        <div id="oppStatus" class="opp-status answering">
+          Opponent is answering…
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* STARFIELD */
+const canvas=document.getElementById("starfield"),ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();addEventListener("resize",resize);
+let stars=[...Array(700)].map(()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.5+.3,s:Math.random()*.6+.2}));
+(function anim(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#9fd3ff";
+  stars.forEach(s=>{
+    s.y+=s.s;if(s.y>canvas.height)s.y=0;
+    ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+  });
+  requestAnimationFrame(anim);
+})();
+
+/* QUESTION BANK */
+const BANK={
+physics:[
+{t:"2D Motion",q:"Trajectory depends on?",o:["Mass","Gravity","Velocity components","Time"],a:2},
+{t:"Kinematics",q:"Horizontal velocity in projectile motion is?",o:["Zero","Constant","Increasing","Decreasing"],a:1},
+{t:"Motion",q:"Acceleration due to gravity acts?",o:["Horizontally","Vertically","Random","Along path"],a:1},
+{t:"Motion",q:"Maximum range occurs at angle?",o:["30°","45°","60°","90°"],a:1}
+],
+chemistry:[
+{t:"Thermodynamics",q:"First law relates?",o:["Heat & work","Entropy","Equilibrium","Gibbs energy"],a:0},
+{t:"Atomic Structure",q:"Max electrons in n=2 shell?",o:["2","4","8","18"],a:2},
+{t:"Bonding",q:"Hybridisation in methane?",o:["sp","sp2","sp3","dsp2"],a:2}
+],
+math:[
+{t:"Calculus",q:"Derivative of sin x?",o:["cos x","-cos x","sin x","-sin x"],a:0},
+{t:"Vectors",q:"|i + j| equals?",o:["1","√2","2","0"],a:1},
+{t:"Quadratic",q:"Roots of x²−4=0?",o:["±2","±4","0","1"],a:0}
+]
+};
+
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+let questions=shuffle([
+...shuffle(BANK.physics).slice(0,4),
+...shuffle(BANK.chemistry).slice(0,3),
+...shuffle(BANK.math).slice(0,3)
+]);
+
+/* DUEL LOGIC */
+let qi=0,xp=0,oppXp=0,prog=0,oppProg=0,time=10,timer;
+let userDone=false,oppDone=false;
+const arena=document.querySelector(".arena");
+
+function loadQ(){
+userDone=oppDone=false;
+let q=questions[qi];
+qNo.innerText=qi+1;
+topic.innerText=q.t;
+question.innerText=q.q;
+options.innerHTML="";
+oppStatus.className="opp-status answering";
+oppStatus.innerText="Opponent is answering…";
+time=10;document.getElementById("time").innerText=time;
+
+q.o.forEach((opt,i)=>{
+let d=document.createElement("div");
+d.className="option";d.innerText=opt;
+d.onclick=()=>userAnswer(i);
+options.appendChild(d);
+});
+
+timer=setInterval(()=>{
+time--;document.getElementById("time").innerText=time;
+if(time===0&&!userDone)userAnswer(-1);
+},1000);
+
+setTimeout(opponentAnswer,1000+Math.random()*1200);
+}
+
+function userAnswer(i){
+if(userDone)return;userDone=true;clearInterval(timer);
+document.querySelectorAll(".option").forEach(o=>o.onclick=null);
+if(i===questions[qi].a){
+options.children[i].classList.add("correct");
+xp+=100;prog+=10;
+}else if(i>=0){
+options.children[i].classList.add("wrong");
+xp=Math.max(0,xp-50);
+}
+xpYou.innerText=xp;
+fillYou.style.height=prog+"%";
+rocketYou.style.bottom=prog+"%";
+checkNext();
+}
+
+function opponentAnswer(){
+oppDone=true;
+let correct=Math.random()>.35;
+oppStatus.className="opp-status "+(correct?"correct":"wrong");
+oppStatus.innerText=correct?"Opponent answered correct":"Opponent answered wrong";
+if(correct){
+oppXp+=100;oppProg+=10;
+xpOpp.innerText=oppXp;
+fillOpp.style.height=oppProg+"%";
+rocketOpp.style.bottom=oppProg+"%";
+}
+checkNext();
+}
+
+function checkNext(){
+if(userDone&&oppDone){
+setTimeout(()=>{
+qi++;
+qi<questions.length?loadQ():showResults();
+},1200);
+}
+}
+
+function showResults(){
+arena.innerHTML=`
+<div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:28px;text-align:center">
+<h1>${xp>oppXp?"You Win 🚀":xp<oppXp?"You Lose 💀":"Draw ⚖️"}</h1>
+<div style="background:rgba(255,255,255,.08);padding:28px 36px;border-radius:24px">
+<div>You: <b>${xp} XP</b></div>
+<div>Opponent: <b>${oppXp} XP</b></div>
+</div>
+
+<div style="display:flex;gap:18px;margin-top:22px">
+  <button class="action-btn" onclick="location.reload()">Next Duel</button>
+  <button class="action-btn secondary" onclick="goToGalaxy()">Back to Galaxy Map</button>
+</div>
+</div>`;
+}
+
+function goToGalaxy(){
+window.location.href = "../duel-challenge-final/duel-landing.html";
+}
+
+loadQ();
+</script>
+
+<script src="../shared/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Netlify Configuration for JEE Website
+
+[build]
+  # Build command - builds the Vite React app
+  command = "npm run build"
+
+  # Output directory where built files will be
+  publish = "dist"
+
+  # Base directory for the build
+  base = "my-jee-website"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Serve static HTML files directly if they exist
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

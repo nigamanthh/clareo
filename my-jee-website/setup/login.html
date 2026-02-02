@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clario | Login</title>
+  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- LEFT SECTION -->
+    <div class="left-section">
+      <h2 class="logo">Clario</h2>
+      <h3>Learn. Explore. Conquer the Galaxy.</h3>
+
+      <div class="astronaut-card">
+        <img src="jn6nvpEKvoBwWPP3hNEnWa.png" alt="Astronaut floating in space">
+
+        <div class="welcome-box">
+          <p>
+            Welcome back, Space Explorer! <br>
+            Ready to continue your journey through <br>
+            the galaxy of knowledge?
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="right-section">
+      <div class="tab">
+        <button class="active">Login</button>
+        <button onclick="window.location.href='signup.html'">Sign Up</button>
+      </div>
+
+      <div class="login-card">
+        <h3>Welcome Back, Space Explorer!</h3>
+        <p class="subtitle">Continue your journey through the cosmos</p>
+
+        <form id="login-form">
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" placeholder="explorer@galaxy.space" required>
+          </div>
+
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="••••••••" required>
+          </div>
+
+          <div class="options">
+            <label>
+              <input type="checkbox"> Remember Me
+            </label>
+            <a href="#">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="launch-btn">
+            🚀 Launch into Learning
+          </button>
+        </form>
+
+        <p class="signup-text">
+          Don't have an account?
+          <a href="signup.html">Start your space mission →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Handle login form submission
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Navigate to choose-galaxy.html using absolute path from project root
+      const currentUrl = window.location.href;
+      const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/setup/'));
+      window.location.href = baseUrl + '/choosegalaxy/choose-galaxy.html';
+    });
+  </script>
+
+  <script src="../shared/chatbot.js?v=2"></script>
+</body>
+</html>

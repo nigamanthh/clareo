@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clario | Practice Quiz</title>
+  <link rel="stylesheet" href="../shared/chatbot.css">
+
+  <!-- MathJax for LaTeX rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: {
+        fontCache: 'global',
+        scale: 1.1
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1b0b2e, #05030a 80%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    /* STARFIELD */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    h1 {
+      color: #37e8ff;
+      font-size: 2.2rem;
+      text-shadow: 0 0 20px rgba(55, 232, 255, 0.6);
+      margin-bottom: 15px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    h1::before {
+      content: "🎯";
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 35px;
+      font-size: 1.05rem;
+    }
+
+    .container {
+      background: rgba(10, 6, 25, 0.65);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(55, 232, 255, 0.25);
+      box-shadow: 0 0 30px rgba(55, 232, 255, 0.15);
+      border-radius: 24px;
+      padding: 45px 50px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .start-screen {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .start-screen p {
+      font-size: 1.15rem;
+      margin-bottom: 30px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #37e8ff, #b94cff);
+      color: #000;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(55, 232, 255, 0.4);
+      transition: all 0.3s;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(55, 232, 255, 0.6);
+    }
+
+    .question-header {
+      background: rgba(55, 232, 255, 0.12);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border-left: 4px solid #37e8ff;
+    }
+
+    .question-number {
+      font-size: 13px;
+      color: #37e8ff;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.6;
+      color: #fff;
+    }
+
+    .options-container {
+      margin: 25px 0;
+    }
+
+    .option {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 18px 20px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all 0.25s;
+      border: 2px solid transparent;
+      font-size: 16px;
+    }
+
+    .option:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(55, 232, 255, 0.3);
+    }
+
+    .option.selected {
+      background: rgba(55, 232, 255, 0.15);
+      border-color: #37e8ff;
+    }
+
+    .option.correct {
+      background: rgba(42, 255, 154, 0.15);
+      border-color: #2aff9a;
+      color: #2aff9a;
+    }
+
+    .option.wrong {
+      background: rgba(255, 79, 122, 0.15);
+      border-color: #ff4f7a;
+      color: #ff4f7a;
+    }
+
+    .option.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .hint-section {
+      background: rgba(255, 200, 91, 0.12);
+      padding: 16px 18px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border-left: 3px solid #ffd36a;
+      display: none;
+    }
+
+    .hint-section.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hint-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffd36a;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hint-text {
+      font-size: 15px;
+      color: rgba(255, 211, 106, 0.9);
+      line-height: 1.5;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #37e8ff, #b94cff);
+      color: #000;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 15px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(55, 232, 255, 0.5);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .hint-btn {
+      background: rgba(255, 200, 91, 0.2);
+      color: #ffd36a;
+      border: 2px solid #ffd36a;
+      padding: 10px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .hint-btn:hover {
+      background: rgba(255, 200, 91, 0.3);
+      box-shadow: 0 0 15px rgba(255, 211, 106, 0.3);
+    }
+
+    .next-btn {
+      background: transparent;
+      color: #37e8ff;
+      border: 2px solid #37e8ff;
+      padding: 12px 30px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .next-btn:hover {
+      background: rgba(55, 232, 255, 0.1);
+      box-shadow: 0 0 20px rgba(55, 232, 255, 0.2);
+    }
+
+    .feedback-message {
+      margin-top: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .feedback-message.show {
+      display: block;
+    }
+
+    .feedback-message.correct {
+      background: rgba(42, 255, 154, 0.15);
+      color: #2aff9a;
+      border: 2px solid #2aff9a;
+    }
+
+    .feedback-message.incorrect {
+      background: rgba(255, 79, 122, 0.15);
+      color: #ff4f7a;
+      border: 2px solid #ff4f7a;
+    }
+
+    .completion-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .completion-icon {
+      font-size: 72px;
+      margin-bottom: 20px;
+      animation: bounce 0.6s ease-in-out;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .completion-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #37e8ff;
+      text-shadow: 0 0 20px rgba(55, 232, 255, 0.5);
+      margin-bottom: 15px;
+    }
+
+    .completion-text {
+      font-size: 16px;
+      margin-bottom: 25px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .score-display {
+      background: rgba(55, 232, 255, 0.1);
+      padding: 25px;
+      border-radius: 14px;
+      margin: 20px 0;
+      border: 2px solid rgba(55, 232, 255, 0.3);
+    }
+
+    .score-value {
+      font-size: 48px;
+      font-weight: 900;
+      color: #37e8ff;
+      text-shadow: 0 0 20px rgba(55, 232, 255, 0.6);
+    }
+
+    .score-label {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 8px;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      display: inline-block;
+      padding: 10px 20px;
+      background: linear-gradient(90deg, #7f00ff, #1f3cff);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 15px;
+    }
+
+    .back-link a:hover {
+      opacity: 0.9;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #37e8ff;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+
+  <div class="content-wrapper">
+    <h1>Motion in 1D Practice Quiz</h1>
+    <p class="subtitle">Test your understanding with JEE-level problems</p>
+
+    <div class="container">
+      <div id="quizContent">
+        <div class="start-screen">
+          <p>
+            Challenge yourself with 30 random questions from Motion in 1D.<br>
+            Get instant feedback and hints to improve your understanding.
+          </p>
+          <button class="start-btn" onclick="startQuiz()">
+            🚀 Start Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="back-link">
+      <a href="../choosegalaxy/try3.html">Back</a>
+    </div>
+  </div>
+
+  <script>
+    /* STARFIELD ANIMATION */
+    const canvas = document.getElementById("starfield");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    let stars = [...Array(700)].map(() => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      s: Math.random() * 0.6 + 0.2
+    }));
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#9fd3ff";
+      stars.forEach(s => {
+        s.y += s.s;
+        if (s.y > canvas.height) s.y = 0;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    animateStars();
+
+    /* QUIZ LOGIC */
+    let allQuestions = [];
+    let quizQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedOption = null;
+    let answered = false;
+
+    const quizContent = document.getElementById('quizContent');
+
+    // Load questions from embedded data
+    async function loadQuestions() {
+      try {
+        // Try to fetch from JSON file first
+        const response = await fetch('questions.json');
+        const data = await response.json();
+        allQuestions = data.questions;
+        return true;
+      } catch (error) {
+        // Fallback to embedded questions if fetch fails (file:// protocol)
+        console.log('Using embedded questions data');
+        allQuestions = QUESTIONS_DATA;
+        return true;
+      }
+    }
+
+    // Embedded questions data as fallback
+    const QUESTIONS_DATA = [
+      {"id":1,"question":"A particle moves along a straight line such that its displacement x at any time t is given by $x = 3t^3 + 7t^2 + 14t + 5$. What is its acceleration at $t = 1$ s?","options":["18 m/s²","32 m/s²","29 m/s²","30 m/s²"],"answer":"32 m/s²","hint":"Acceleration is the second derivative of displacement. Find $d^2x/dt^2$."},
+      {"id":2,"question":"A car travels the first half of a distance with a speed of $v_1$ and the second half with a speed of $v_2$. What is the average speed of the car?","options":["$(v_1 + v_2)/2$","$\\sqrt{v_1 v_2}$","$2v_1 v_2 / (v_1 + v_2)$","$v_1 / v_2$"],"answer":"$2v_1 v_2 / (v_1 + v_2)$","hint":"Average speed is Total Distance / Total Time. Assume total distance is 2x."},
+      {"id":3,"question":"A body starts from rest and moves with uniform acceleration. The ratio of the distance covered in the nth second to the distance covered in n seconds is:","options":["$2/n - 1/n^2$","$1/n^2 - 1/n$","$2/n^2 - 1/n$","$2n - 1 / n$"],"answer":"$2/n - 1/n^2$","hint":"Use $S_n = u + a/2(2n-1)$ for the nth second and $S = ut + 1/2at^2$ for total distance."},
+      {"id":4,"question":"The velocity of a particle is given by $v = k\\sqrt{x}$, where k is a constant. The acceleration of the particle is:","options":["$k^2/2$","$k/2$","$k^2$","$2k^2$"],"answer":"$k^2/2$","hint":"Use the chain rule for acceleration: $a = v(dv/dx)$."},
+      {"id":5,"question":"A stone is dropped from a tower of height h. Simultaneously, another stone is thrown up from the ground which reaches a height 4h. The two stones will cross each other after time:","options":["$\\sqrt{h/8g}$","$\\sqrt{8gh}$","$\\sqrt{h/2g}$","$\\sqrt{h/8g}$"],"answer":"$\\sqrt{h/8g}$","hint":"Consider relative motion. The relative acceleration between two free-falling bodies is zero."},
+      {"id":6,"question":"The displacement of a particle is given by $x = (t-2)^2$. What is the distance covered by the particle in the first 4 seconds?","options":["4 m","8 m","12 m","0 m"],"answer":"8 m","hint":"Check if the particle changes direction by finding where velocity $v=0$."},
+      {"id":7,"question":"A ball is thrown vertically upward with a velocity u. It returns to the ground in time T. Which graph best represents the velocity-time graph?","options":["Straight line with positive slope","Straight line with negative slope","Parabola","Straight line with zero slope"],"answer":"Straight line with negative slope","hint":"The equation is $v = u - gt$, which is a straight line equation $y = mx + c$ with negative slope."},
+      {"id":8,"question":"A particle moves starting from rest with constant acceleration $\\alpha$ for some time, then decelerates at rate $\\beta$ to rest. If total time is T, max velocity is:","options":["$\\alpha\\beta T / (\\alpha + \\beta)$","$(\\alpha + \\beta) T / 2$","$(\\alpha^2 + \\beta^2) T / \\alpha\\beta$","None"],"answer":"$\\alpha\\beta T / (\\alpha + \\beta)$","hint":"Draw the v-t graph. The maximum velocity is the peak of the triangle."},
+      {"id":9,"question":"Relation between time t and displacement x is $t = \\alpha x^2 + \\beta x$. The retardation of the particle is:","options":["$2\\alpha v^3$","$2\\beta v^3$","$2\\alpha v^2$","$2\\beta^2 v^3$"],"answer":"$2\\alpha v^3$","hint":"Differentiate t w.r.t x to find 1/v, then differentiate again to find acceleration."},
+      {"id":10,"question":"A balloon rises with acceleration 1.25 m/s². After 8s, a stone is released. Time taken by stone to reach ground ($g=10$ m/s²)?","options":["2 s","4 s","5 s","8 s"],"answer":"4 s","hint":"The stone's initial velocity is the balloon's velocity at $t=8$, but directed upwards."},
+      {"id":11,"question":"A body travels 200 cm in first 2s and 220 cm in next 4s. Velocity at end of 7th second?","options":["10 cm/s","15 cm/s","20 cm/s","5 cm/s"],"answer":"10 cm/s","hint":"Form two equations using $S = ut + 1/2at^2$ for t=2 and t=6 (2+4)."},
+      {"id":12,"question":"Drops fall from 5m height. 3rd drop leaves when 1st touches ground. How far is 2nd drop from ground?","options":["1.25 m","2.50 m","3.75 m","4.00 m"],"answer":"3.75 m","hint":"Find time interval between drops. Calculate distance fallen by 2nd drop and subtract from total height."},
+      {"id":13,"question":"Police jeep (45 km/h) chases thief (153 km/h). Bullet fired at 180 m/s. Strike velocity?","options":["150 m/s","27 m/s","450 m/s","250 m/s"],"answer":"150 m/s","hint":"Convert km/h to m/s. Velocity of bullet = Muzzle velocity + Jeep velocity. Then find relative velocity."},
+      {"id":14,"question":"Particle covers half distance at 3 m/s. Other half in two equal time intervals at 4.5 and 7.5 m/s. Average speed?","options":["4.0 m/s","5.0 m/s","5.5 m/s","4.8 m/s"],"answer":"4.0 m/s","hint":"Find average speed of the second half first (arithmetic mean), then combine with first half (harmonic mean)."},
+      {"id":15,"question":"Which graph represents negative acceleration?","options":["v-t graph with positive slope","x-t graph concave up","v-t graph with negative slope","x-t graph straight line"],"answer":"v-t graph with negative slope","hint":"Slope of Velocity-Time graph gives acceleration."},
+      {"id":16,"question":"Body thrown up. If air resistance exists, time of rise is ___ time of fall.","options":["Equal to","Less than","Greater than","Twice"],"answer":"Less than","hint":"Air resistance adds to gravity during ascent (increasing deceleration) but opposes gravity during descent."},
+      {"id":17,"question":"Car accelerates at $\\alpha$, then decelerates at $\\beta$ to rest. Total distance s. Max velocity?","options":["$\\sqrt{2s \\alpha \\beta / (\\alpha + \\beta)}$","$\\sqrt{s(\\alpha+\\beta)}$","$s \\alpha \\beta / (\\alpha + \\beta)$","None"],"answer":"$\\sqrt{2s \\alpha \\beta / (\\alpha + \\beta)}$","hint":"Use area under v-t triangle for distance: Area = 1/2 * base * height."},
+      {"id":18,"question":"v1, v2, v3 are average velocities in successive time intervals t1, t2, t3. Correct relation?","options":["(v1-v2)/(v2-v3) = (t1+t2)/(t2+t3)","v1+v2+v3=0","v1-v2=v2-v3","None"],"answer":"(v1-v2)/(v2-v3) = (t1+t2)/(t2+t3)","hint":"Average velocity in an interval is the instantaneous velocity at the mid-point of that time interval."},
+      {"id":19,"question":"Stopping distance of a vehicle is proportional to:","options":["Initial velocity","Square of initial velocity","Square root of velocity","Cube of velocity"],"answer":"Square of initial velocity","hint":"Use the third equation of motion: $v^2 - u^2 = 2as$. Here $v=0$."},
+      {"id":20,"question":"Packet dropped from balloon rising at 12 m/s. Reaches ground in 2s. Displacement?","options":["4 m","40 m","20 m","60 m"],"answer":"4 m","hint":"Use $s = ut - 1/2gt^2$. Be careful with signs: u is positive (up), g is negative (down)."},
+      {"id":21,"question":"Particle moves distance l (accel), 2l (uniform), 3l (retard). Ratio of avg speed to max speed?","options":["3/5","2/5","1/5","4/5"],"answer":"3/5","hint":"Calculate total time in terms of max velocity v and length l, then divide total distance by total time."},
+      {"id":22,"question":"Velocity changes from 10 m/s to 20 m/s over 135 m. Time t?","options":["12 s","9 s","10 s","1.8 s"],"answer":"9 s","hint":"Use $S = \\text{Average Velocity} \\times t$. Average velocity is $(u+v)/2$."},
+      {"id":23,"question":"Velocity $v = \\alpha \\sqrt{x}$. Displacement varies with time as:","options":["$t^2$","$t$","$t^{1/2}$","$t^3$"],"answer":"$t^2$","hint":"Write $v = dx/dt$, separate variables x and t, and integrate."},
+      {"id":24,"question":"Ball dropped from H and 2H. Ratio of times to reach ground?","options":["$1:\\sqrt{2}$","$1:2$","$1:4$","$\\sqrt{2}:1$"],"answer":"$1:\\sqrt{2}$","hint":"Time of flight $T = \\sqrt{2H/g}$. T is proportional to $\\sqrt{H}$."},
+      {"id":25,"question":"Car accelerates from rest to 144 km/h in 20s. Distance?","options":["2880 m","400 m","1440 m","200 m"],"answer":"400 m","hint":"Convert 144 km/h to m/s first. Then use $s = 1/2(u+v)t$."},
+      {"id":26,"question":"Position $x = 2t^3 - 3t^2 + 1$. Time when velocity is zero?","options":["0 s","1 s","2 s","1.5 s"],"answer":"1 s","hint":"Find derivative $v = dx/dt$ and find roots of the quadratic equation."},
+      {"id":27,"question":"Which v-t graph implies body comes to rest and reverses direction?","options":["Line crossing time axis","Line above time axis","Line parallel to time axis","Curve touching time axis"],"answer":"Line crossing time axis","hint":"Velocity must change sign (go from positive to negative) to reverse direction."},
+      {"id":28,"question":"Bullet loses 1/20th velocity in one plank. Number of planks to stop?","options":["10","11","20","6"],"answer":"11","hint":"Use $v^2 - u^2 = 2as$. The velocity squared decreases linearly with distance."},
+      {"id":29,"question":"v-t graph is straight line with negative slope. Acceleration is:","options":["Positive constant","Negative constant","Variable","Zero"],"answer":"Negative constant","hint":"Acceleration is the derivative (slope) of the velocity-time graph."},
+      {"id":30,"question":"Positions $x_P = at + bt^2$ and $x_Q = ft - t^2$. Time when they have same velocity?","options":["$(f-a)/(2(1+b))$","$(a-f)/(1+b)$","$(a+f)/(2(b-1))$","None"],"answer":"$(f-a)/(2(1+b))$","hint":"Differentiate both position functions to get velocity, then equate $v_P = v_Q$."}
+    ];
+
+    async function startQuiz() {
+      quizContent.innerHTML = '<div class="loading">Loading questions...</div>';
+
+      const loaded = await loadQuestions();
+      if (!loaded || allQuestions.length === 0) return;
+
+      // Use all 30 questions in random order
+      quizQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
+      currentQuestionIndex = 0;
+      score = 0;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestionIndex >= quizQuestions.length) {
+        showResults();
+        return;
+      }
+
+      const q = quizQuestions[currentQuestionIndex];
+      selectedOption = null;
+      answered = false;
+
+      const html = `
+        <div class="question-header">
+          <div class="question-number">Question ${currentQuestionIndex + 1} of ${quizQuestions.length}</div>
+          <div class="question-text">${q.question}</div>
+        </div>
+
+        <div class="options-container" id="optionsContainer">
+          ${q.options.map((option, index) => `
+            <div class="option" onclick="selectOption(${index})" id="option${index}">
+              ${option}
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="hint-section" id="hintSection">
+          <div class="hint-label">💡 Hint</div>
+          <div class="hint-text">${q.hint}</div>
+        </div>
+
+        <div class="feedback-message" id="feedbackMessage"></div>
+
+        <div class="action-buttons">
+          <button class="submit-btn" id="submitBtn" onclick="checkAnswer()" disabled>
+            Submit Answer
+          </button>
+          <button class="hint-btn" onclick="toggleHint()">
+            💡 Show Hint
+          </button>
+        </div>
+      `;
+
+      quizContent.innerHTML = html;
+
+      // Re-render MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise([quizContent]).catch(err => console.log('MathJax error:', err));
+      }
+    }
+
+    function selectOption(index) {
+      if (answered) return;
+
+      // Clear previous selection
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+
+      // Select new option
+      selectedOption = index;
+      document.getElementById(`option${index}`).classList.add('selected');
+      document.getElementById('submitBtn').disabled = false;
+    }
+
+    function toggleHint() {
+      const hintSection = document.getElementById('hintSection');
+      hintSection.classList.toggle('show');
+    }
+
+    function checkAnswer() {
+      if (selectedOption === null || answered) return;
+
+      answered = true;
+      const q = quizQuestions[currentQuestionIndex];
+      const correctAnswer = q.answer;
+      const userAnswer = q.options[selectedOption];
+
+      const feedbackEl = document.getElementById('feedbackMessage');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // Disable all options
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.add('disabled');
+      });
+
+      // Find correct option index
+      const correctIndex = q.options.findIndex(opt => opt === correctAnswer);
+
+      if (userAnswer === correctAnswer) {
+        score++;
+        document.getElementById(`option${selectedOption}`).classList.add('correct');
+        feedbackEl.textContent = '✓ Correct! Well done!';
+        feedbackEl.className = 'feedback-message correct show';
+      } else {
+        document.getElementById(`option${selectedOption}`).classList.add('wrong');
+        document.getElementById(`option${correctIndex}`).classList.add('correct');
+        feedbackEl.textContent = `✗ Incorrect. The correct answer is: ${correctAnswer}`;
+        feedbackEl.className = 'feedback-message incorrect show';
+      }
+
+      // Show hint if not already shown
+      document.getElementById('hintSection').classList.add('show');
+
+      // Change submit button to next button
+      submitBtn.textContent = currentQuestionIndex < quizQuestions.length - 1 ? 'Next Question →' : 'View Results';
+      submitBtn.className = 'next-btn';
+      submitBtn.onclick = nextQuestion;
+      submitBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function showResults() {
+      const percentage = Math.round((score / quizQuestions.length) * 100);
+      const emoji = percentage >= 80 ? '🎉' : percentage >= 60 ? '👍' : percentage >= 40 ? '📚' : '💪';
+      const message = percentage >= 80 ? 'Outstanding!' :
+                      percentage >= 60 ? 'Good Job!' :
+                      percentage >= 40 ? 'Keep Practicing!' : 'Don\'t Give Up!';
+
+      const html = `
+        <div class="completion-screen">
+          <div class="completion-icon">${emoji}</div>
+          <div class="completion-title">${message}</div>
+          <div class="completion-text">You've completed the quiz!</div>
+
+          <div class="score-display">
+            <div class="score-value">${score}/${quizQuestions.length}</div>
+            <div class="score-label">${percentage}% Correct</div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="start-btn" onclick="startQuiz()">
+              🔄 Try Again
+            </button>
+            <button class="next-btn" onclick="location.href='../choosegalaxy/try3.html'">
+              Back
+            </button>
+          </div>
+        </div>
+      `;
+
+      quizContent.innerHTML = html;
+    }
+
+    // Make functions globally available
+    window.startQuiz = startQuiz;
+    window.selectOption = selectOption;
+    window.checkAnswer = checkAnswer;
+    window.nextQuestion = nextQuestion;
+    window.toggleHint = toggleHint;
+  </script>
+
+  <script src="../shared/chatbot.js"></script>
+</body>
+</html>

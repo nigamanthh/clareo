@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clario | Sign Up</title>
+  <link rel="stylesheet" href="signup.css">
+  <link rel="stylesheet" href="../shared/chatbot.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- LEFT SECTION -->
+    <div class="left-section">
+      <h2 class="logo">Clario</h2>
+      <h3>Learn. Explore. Conquer the Galaxy.</h3>
+
+      <div class="astronaut-card">
+        <img src="jn6nvpEKvoBwWPP3hNEnWa.png" alt="Astronaut floating in space">
+
+        <div class="welcome-box">
+          <p>
+            Ready to begin your cosmic journey?<br>
+            Sign up and start exploring your learning galaxies!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="right-section">
+      <div class="tab">
+        <button onclick="window.location.href='login.html'">Login</button>
+        <button class="active">Sign Up</button>
+      </div>
+
+      <div class="signup-card">
+        <h3>Join the Clario Universe</h3>
+        <p class="subtitle">Create your explorer profile</p>
+
+        <form>
+          <!-- Inputs -->
+          <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your cosmic name" required>
+          </div>
+
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" placeholder="explorer@galaxy.space" required>
+          </div>
+
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Create a secure password" required>
+          </div>
+
+          <div class="input-group">
+            <label>Class</label>
+            <select required>
+              <option value="">Select your class</option>
+              <option value="11">11th</option>
+              <option value="12">12th</option>
+            </select>
+          </div>
+
+          <!-- Subjects -->
+          <div class="subjects">
+            <label class="subject-label">Select Your Subject Galaxies</label>
+            <div class="subject-grid">
+              <div class="subject">Mathematics</div>
+              <div class="subject">Physics</div>
+              <div class="subject">Chemistry</div>
+              <div class="subject">Biology</div>
+              <div class="subject">English</div>
+            </div>
+          </div>
+
+          <!-- Agreement -->
+          <div class="agreement">
+            <label>
+              <input type="checkbox" required>
+              I’m ready to explore the galaxy of knowledge and agree to the cosmic terms.
+            </label>
+          </div>
+
+          <button type="submit" class="launch-btn" onclick="event.preventDefault(); window.location.href='../choosegalaxy/choose-galaxy.html';">🚀 Start Journey</button>
+
+          <p class="signup-text">
+            Already have an account?
+            <a href="login.html">Launch into Learning →</a>
+          </p>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/chatbot.js"></script>
+</body>
+</html>

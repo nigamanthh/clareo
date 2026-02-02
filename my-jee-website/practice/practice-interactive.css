@@ -1,0 +1,149 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0b0f2b, #020314);
+  color: #e6e6ff;
+}
+
+.header {
+  text-align: center;
+  padding: 40px 20px;
+  background: linear-gradient(90deg, #1f3cff, #7f00ff);
+}
+
+.header h1 {
+  font-size: 2rem;
+}
+
+.header p {
+  margin-top: 5px;
+  font-size: 1.1rem;
+  color: #cce0ff;
+}
+
+.neutron {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  width: 90%;
+  max-width: 800px;
+  margin: 25px auto;
+  padding: 20px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+
+.neutron img {
+  width: 70px;
+}
+
+.content {
+  width: 90%;
+  max-width: 800px;
+  margin: auto;
+}
+
+.card {
+  background: rgba(255,255,255,0.06);
+  padding: 30px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 30px;
+}
+
+.q-text {
+  margin-bottom: 20px;
+  font-size: 1.05rem;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option {
+  padding: 12px 15px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.2s;
+}
+
+.option:hover {
+  border-color: #7fd7ff;
+}
+
+.option.selected {
+  background: rgba(127,215,255,0.25);
+  border-color: #7fd7ff;
+}
+
+.option.correct {
+  background: rgba(76,255,76,0.25);
+  border-color: #4cff4c;
+}
+
+.option.wrong {
+  background: rgba(255,80,80,0.25);
+  border-color: #ff5050;
+}
+
+.check-btn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #00b4d8, #0077b6);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.check-btn:hover {
+  opacity: 0.9;
+}
+
+.feedback {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.nav-right {
+  display: flex;
+  gap: 10px;
+}
+
+.navigation button {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #7f00ff, #1f3cff);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.navigation button:hover {
+  opacity: 0.9;
+}
+
+.complete {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #4cff4c;
+}

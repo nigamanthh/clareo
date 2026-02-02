@@ -1,0 +1,29 @@
+{
+  "name": "jee-backend-server",
+  "version": "1.0.0",
+  "description": "Backend API server for JEE preparation website",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "keywords": ["express", "api", "gemini", "chatbot"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@remotion/bundler": "^4.0.395",
+    "@remotion/cli": "^4.0.395",
+    "@remotion/renderer": "^4.0.395",
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "form-data": "^4.0.5",
+    "remotion": "^4.0.395"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
