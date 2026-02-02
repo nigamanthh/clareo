@@ -1,6 +1,122 @@
-# 🚀 Complete Deployment Guide - JEE Website
+Clario 🪐
+Transforming Passive Learning into an Adaptive, Gamified Experience
+Live Demo: clareo.netlify.app
 
-This guide will help you deploy your entire JEE website with all components working.
+🚧 Project Status: MVP (Minimum Viable Product) This project is currently in its MVP stage. The features and architecture described below represent the core functionality implemented for the initial prototype and hackathon demonstration.
+
+📖 Overview
+
+Clario addresses the "retention crisis" in education where generic, static learning systems lead to disengagement and low knowledge transfer.
+
+We fuse an interstellar narrative (exploring galaxies and planets) with AI-adaptive quizzing to create a challenging, measurably effective, and habit-forming learning environment. Unlike competitors that focus only on quizzes, Clario implements a full "Explore → Build → Advance" workflow to guarantee mastery.
++2
+
+🚀 Key Features
+🧠 Adaptive Intelligence
+
+AI-Driven Quizzing: Real-time difficulty scaling based on machine learning performance logs.
+
+
+Full Mastery Loop: Guarantees coverage via a structured "Explore → Build → Advance" workflow.
+
+Dr. Neutron: An AI mentor powered by the Gemini API that provides personalized feedback and motivation.
+
+⚔️ Competitive Social Layer
+
+Duel Challenges: 1v1, Team, and Tournament modes to drive competitive social learning.
+
+
+Real-Time Engagement: Powered by Socket.io for instant synchronization of duels, XP, and leaderboards.
+
+🛠️ Procedural Guidance
+
+Stepwise Hint Engine: Interactive guidance that teaches procedural logic with input validation rather than just giving the answer.
+
+
+Feedback at Failure Points: Provides step-by-step help specifically when a student struggles, solving the "feedback void".
+
+🌌 Gamified Narrative
+
+Galactic Adventure: Users select "Planets" (chapters) to learn, transforming studying into exploration and conquest.
++1
+
+⚙️ Tech Stack
+Frontend
+
+
+React.js: Handles dynamic rendering, progress tracking, and the interactive "Galaxy Map" navigation.
+
+Backend & Database
+
+
+Node.js / Express.js: Primary REST API layer handling authentication and data routing.
+
+
+Firebase (Firestore/Functions): Serverless backend for storing performance logs and handling server-side logic.
+
+AI & Machine Learning
+
+
+Gemini API (Generative AI): Powers the adaptive intelligence layer for dynamic question generation and personalized hints.
+
+
+Python ML Microservice: A hybrid Scikit-learn and FastAPI infrastructure that automates error diagnosis and mastery prediction.
+
+Real-Time Communication
+
+
+Socket.io: Enables the "Academic Duels" and real-time synchronization.
+
+🔄 The Adaptive Learning Cycle
+Clario follows a continuous feedback loop to ensure retention:
+
+
+Select Planet: User chooses a chapter to learn.
+
+
+Challenge Question: System presents a question.
+
+
+Stepwise Hints: System provides interactive hints if the user struggles.
+
+
+Analyze Response: System scores the user's response.
+
+
+Update Profile: System updates the user's mastery profile.
+
+
+Adapt Challenge: System adjusts the next question based on performance.
+
+🗺️ Roadmap & Future Development
+Institutional B2B Scaling:
+
+
+Curriculum Automation: System-run learning loops to reduce teacher workload.
+
+
+Live Heatmaps: Auto-generated class mastery and risk alerts.
+
+
+Tournament Engine: Automated brackets for school-wide competitions.
+
+Proactive AI (Dr. Neutron 2.0):
+
+
+Smart Interventions: Prompts to slow down or skip mastered content.
+
+
+Mission Planning: Daily reports on strengths, weaknesses, and next steps.
+
+The "Repair Mission" Protocol:
+
+
+Auto-Remediation: Injects "Repair Missions" to fix specific conceptual or procedural gaps immediately.
+
+
+# 🚀 Complete Deployment Guide - Clareo Website
+
+This guide will help you deploy your entire Clareo website with all components working.
 
 ## Architecture Overview
 
